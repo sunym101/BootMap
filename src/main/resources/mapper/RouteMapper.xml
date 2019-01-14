@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunym.map.mapper.RouteMapper">
+	<!-- 获取线路信息 -->
+	<select id="getRoute" parameterType="java.lang.String" resultType="com.sunym.map.model.RouteModel">
+		SELECT mr.v_route_code AS routeCode,
+		mr.v_route_name AS routeName
+		FROM tbl_mst_route mr
+		<where>
+			<if test="route_code != null">
+				mr.v_route_code = #{route_code}
+			</if>
+		</where>
+		ORDER BY mr.v_route_code;
+	</select>
+
+	<!-- 获取线路的车站信息 -->
+	<select id="getRouteStations" parameterType="java.lang.String" resultType="com.sunym.map.model.StationModel">
+		SELECT mrs.v_route_code as routeCode,
+		mrs.i_station_no as stationNo,
+		mrs.v_station_name as stationName,
+		mrs.dc_longitude AS lng,
+		mrs.dc_latitude AS lat
+		FROM
+		tbl_mst_route_station mrs
+		<where>
+			<if test="route_code != null">
+				AND mrs.v_route_code = #{route_code}
+			</if>
+		</where>
+		ORDER BY mrs.i_station_no;
+	</select>
+
+	<!-- 获取实际驾驶线路的到站信息 -->
+	<select id="getDriveStations" parameterType="java.lang.String" resultType="com.sunym.map.model.StationModel">
+		SELECT a.v_route_code AS routeCode,
+		DATE(a.dt_crtdt) AS run_date,
+		a.i_shift_code, a.t_start_time,
+		a.i_station_code AS stationNo,
+		a.i_station_name AS	stationName,
+		a.dc_longitude AS lng,
+		a.dc_latitude AS lat
+		FROM tbl_biz_vehicle_arrive a
+		<where>
+			<if test="route_code != null">
+				AND a.v_route_code = #{route_code}
+			</if>
+			<if test="drv_date != null">
+				AND DATE(a.dt_crtdt) = #{drv_date}
+			</if>
+			<if test="drv_time != null">
+				AND a.t_start_time = #{drv_time}
+			</if>
+		</where>
+		ORDER BY a.i_station_code
+	</select>
+</mapper>
