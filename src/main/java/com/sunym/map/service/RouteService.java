@@ -13,4 +13,6 @@ public interface RouteService {
 	public List<StationModel> getRouteStations(String route_code);
 	
 	public List<StationModel> getDriveStations(String route_code, String drv_date, String drv_time);
+	
+	public List<StationModel> getSingleStationPostions(String route_code, String start_date, String end_date, Integer station_no);
 }

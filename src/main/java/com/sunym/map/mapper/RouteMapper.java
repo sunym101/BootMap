@@ -23,4 +23,5 @@ public interface RouteMapper {
 
 	List<StationModel> getDriveStations(@Param("route_code") String route_code, @Param("drv_date") String drv_date, @Param("drv_time") String drv_time);
 
+	List<StationModel> getSingleStationPostions(@Param("route_code") String route_code, @Param("start_date") String start_date, @Param("end_date") String end_date, @Param("station_no") Integer station_no);
 }

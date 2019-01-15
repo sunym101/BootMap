@@ -23,7 +23,7 @@ public class MapController {
 
 	@RequestMapping("/routeStations")
 	public String routeStations(ModelMap map, String routeCode) {
-		log.debug("");
+		log.debug("routeStations");
 		ResultEntity entity = null;
 		if (StringUtil.isEmpty(routeCode)) {
 			entity = new ResultEntity("0002", "请求参数[routeCode]为空!");

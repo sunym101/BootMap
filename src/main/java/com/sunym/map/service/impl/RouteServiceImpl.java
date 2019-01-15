@@ -40,4 +40,9 @@ public class RouteServiceImpl implements RouteService {
 	public List<StationModel> getDriveStations(String route_code, String drv_date, String drv_time) {
 		return routeMapper.getDriveStations(route_code, drv_date, drv_time);
 	}
+
+	@Override
+	public List<StationModel> getSingleStationPostions(String route_code, String start_date, String end_date, Integer station_no) {
+		return routeMapper.getSingleStationPostions(route_code, start_date, end_date, station_no);
+	}
 }

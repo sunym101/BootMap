@@ -23,7 +23,11 @@
 		mrs.i_station_no as stationNo,
 		mrs.v_station_name as stationName,
 		mrs.dc_longitude AS lng,
-		mrs.dc_latitude AS lat
+		mrs.dc_latitude AS lat,
+		mrs.dc_longitude_before AS lng1,
+		mrs.dc_latitude_before AS lat1,
+		mrs.dc_longitude_after AS lng2,
+		mrs.dc_latitude_after AS lat2
 		FROM
 		tbl_mst_route_station mrs
 		<where>
@@ -40,9 +44,14 @@
 		DATE(a.dt_crtdt) AS run_date,
 		a.i_shift_code, a.t_start_time,
 		a.i_station_code AS stationNo,
-		a.i_station_name AS	stationName,
+		a.i_station_name AS
+		stationName,
 		a.dc_longitude AS lng,
-		a.dc_latitude AS lat
+		a.dc_latitude AS lat,
+		a.dc_longitude AS lng1,
+		a.dc_latitude AS lat1,
+		a.dc_longitude AS lng2,
+		a.dc_latitude AS lat2
 		FROM tbl_biz_vehicle_arrive a
 		<where>
 			<if test="route_code != null">
@@ -56,5 +65,37 @@
 			</if>
 		</where>
 		ORDER BY a.i_station_code
+	</select>
+
+	<!-- 获取实际驾驶线路的到站信息 -->
+	<select id="getSingleStationPostions" parameterType="java.lang.String" resultType="com.sunym.map.model.StationModel">
+		SELECT a.v_route_code AS routeCode,
+		DATE(a.dt_crtdt) AS run_date,
+		a.i_shift_code, a.t_start_time,
+		a.i_station_code AS stationNo,
+		a.i_station_name AS
+		stationName,
+		a.dc_longitude AS lng,
+		a.dc_latitude AS lat,
+		a.dc_longitude AS lng1,
+		a.dc_latitude AS lat1,
+		a.dc_longitude AS lng2,
+		a.dc_latitude AS lat2
+		FROM tbl_biz_vehicle_arrive a
+		<where>
+			<if test="route_code != null">
+				AND a.v_route_code = #{route_code}
+			</if>
+			<if test="start_date != null">
+			<![CDATA[ AND DATE(a.dt_crtdt) >= #{start_date} ]]>
+			</if>
+			<if test="end_date != null">
+			<![CDATA[ AND DATE(a.dt_crtdt) <= #{end_date} ]]>
+			</if>
+			<if test="station_no != null">
+				AND a.i_station_code = #{station_no}
+			</if>
+		</where>
+		ORDER BY a.dt_crtdt;
 	</select>
 </mapper>

@@ -35,9 +35,18 @@ body, button, input, select, textarea {
 		var i = 0;
 		<#list json as item>		
 			var lat = ${item.lat?string("#.00000000")};
-			var lng = ${item.lng?string("#.00000000")};				
+			var lng = ${item.lng?string("#.00000000")};
+			
+			if(${index!"0"} == "1"){
+				lat = ${item.lat1?string("#.00000000")};
+				lng = ${item.lng1?string("#.00000000")};
+			}else if(${index!"0"} == "2"){
+				lat = ${item.lat2?string("#.00000000")};
+				lng = ${item.lng2?string("#.00000000")};
+			}
+			
 			arrPos[i] = new qq.maps.LatLng(lat, lng);			
-			arrLable[i] = "${item.stationNo}:${item.stationName}";
+			arrLable[i] = "${item.stationNo}:${item.stationName}:" + lat + "-" + lng;
 			i++;			
 		</#list>	
 	}
@@ -69,15 +78,20 @@ body, button, input, select, textarea {
 </script>
 </head>
 <body onload="init()">
-	<div id="msg">
-		<table border="1" width="60%">
+	<div id="container"></div>
+	<div id="msg" style="display:;">
+		<table border="1" width="90%">
 			<tr>
 				<td width="4%" align="center">线路编号</td>
 				<td width="10%" align="center">线路名称</td>
 				<td width="4%" align="center">车站序号</td>
 				<td width="20%" align="center">车站名称</td>
-				<td width="10%" align="center">纬度</td>
-				<td width="10%" align="center">经度</td>
+				<td width="10%" align="center">纬度0</td>
+				<td width="10%" align="center">经度0</td>
+				<td width="10%" align="center">纬度1</td>
+				<td width="10%" align="center">经度1</td>
+				<td width="10%" align="center">纬度2</td>
+				<td width="10%" align="center">经度2</td>
 			</tr>
 			<#list json as item>
 			<tr>
@@ -87,11 +101,15 @@ body, button, input, select, textarea {
 				<td align="left">${item.stationName}</td>
 				<td align="center">${item.lat?string("#.00000000")}</td>
 				<td align="center">${item.lng?string("#.00000000")}</td>
+				<td align="center">${item.lat1?string("#.00000000")}</td>
+				<td align="center">${item.lng1?string("#.00000000")}</td>
+				<td align="center">${item.lat2?string("#.00000000")}</td>
+				<td align="center">${item.lng2?string("#.00000000")}</td>
 			</tr>
 			</#list>
 		</table>
 	</div>
 
-	<div id="container"></div>
+
 </body>
 </html>

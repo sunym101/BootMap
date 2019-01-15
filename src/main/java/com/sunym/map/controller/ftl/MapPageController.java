@@ -23,8 +23,9 @@ public class MapPageController {
 	@Autowired
 	RouteService routeService;
 
+	// http://localhost:18081/map/routeStationsPage?routeCode=0001
 	@RequestMapping("/routeStationsPage")
-	public String routeStationsPage(ModelMap map, String routeCode) {
+	public String routeStationsPage(ModelMap map, String routeCode, String index) {
 		log.debug("routeStationsPage");
 		ResultEntity entity = null;
 		if (StringUtil.isEmpty(routeCode)) {
@@ -52,14 +53,20 @@ public class MapPageController {
 			entity = new ResultEntity("0000", "OK");
 			entity.setResult_info("stations", list);
 
+			if(StringUtil.isEmpty(index)){
+				index = "0";
+			}
+			
 			map.put("pageTitle", route.getRouteName());
 			map.put("routeName", route.getRouteName());
-			map.put("stationData", JSON.toJSONString(list));
+			map.put("stationData", JSON.toJSONString(list));	
+			map.put("index", index);
 
 			return "stationMap";// 跳转到ftl页面
 		}
 	}
 
+	// http://localhost:18081/map/driveStationsPage?routeCode=0001&driveDate=2019-01-08&driveShiftTime=20:45:00
 	@RequestMapping("/driveStationsPage")
 	public String driveStationsPage(ModelMap map, String routeCode, String driveDate, String driveShiftTime) {
 		log.debug("driveStationsPage");
@@ -106,6 +113,7 @@ public class MapPageController {
 			map.put("pageTitle", route.getRouteName());
 			map.put("routeName", route.getRouteName());
 			map.put("stationData", JSON.toJSONString(list));
+			map.put("index", "0");
 
 			return "stationMap";// 跳转到ftl页面
 		}
@@ -115,5 +123,42 @@ public class MapPageController {
 		map.put("pageName", "routeStationsPage");
 		map.put("errorMessage", entity.toJson());
 		return "errorPage";// 跳转到ftl页面
+	}
+
+	// http://localhost:18081/map/sigleStations?routeCode=0001&startDate=2019-01-08&endDate=2019-01-14#stationNo=1
+	@RequestMapping("/sigleStations")
+	public String sigleStations(ModelMap map, String routeCode, String startDate, String endDate, String stationNo) {
+		log.debug("sigleStations");
+		ResultEntity entity = null;
+		if (StringUtil.isEmpty(routeCode) || StringUtil.isEmpty(startDate) || StringUtil.isEmpty(endDate) || StringUtil.isEmpty(stationNo)) {
+			entity = new ResultEntity("0003", "缺少必要的请求参数!routeCode=[" + routeCode + "], startDate=[" + startDate + "], endDate=[" + endDate + "], stationNo=[" + stationNo + "].");
+
+			// 设置错误信息
+			map.put("pageName", "sigleStations");
+			map.put("errorMessage", entity.toJson());
+			return "errorPage";// 跳转到ftl页面
+		} else {
+
+			RouteModel route = routeService.getSingleRoute(routeCode);
+			if (route == null) {
+				entity = new ResultEntity("0003", "数据不存在，routeCode = [" + routeCode + "]!");
+				// 设置错误信息
+				map.put("pageName", "routeStationsPage");
+				map.put("errorMessage", entity.toJson());
+				return "errorPage";// 跳转到ftl页面
+			}
+
+			int iStationNo = Integer.parseInt(stationNo);
+			List<StationModel> list = routeService.getSingleStationPostions(routeCode, startDate, endDate, iStationNo);
+			entity = new ResultEntity("0000", "OK");
+			entity.setResult_info("stations", list);
+
+			map.put("pageTitle", route.getRouteName());
+			map.put("routeName", route.getRouteName());
+			map.put("stationData", JSON.toJSONString(list));
+			map.put("index", "0");
+
+			return "stationMap";// 跳转到ftl页面
+		}
 	}
 }
