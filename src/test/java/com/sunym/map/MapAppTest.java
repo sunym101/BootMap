@@ -11,7 +11,7 @@ public class MapAppTest {
 
 	@Test
 	public void testWelcome() {
-		String result = HttpRequestUtil.doGet("http://localhost:18081/map/welcomeapi", "UTF-8");
-		log.debug(result);
+		//String result = HttpRequestUtil.doGet("http://localhost:18081/map/welcomeapi", "UTF-8");
+		//log.debug(result);
 	}
 }
